@@ -53,7 +53,9 @@
 <a id="4."></a>
 ## 4. 📊 다이어그램
 
-<Img src = "https://hackmd.io/_uploads/ryi5MtESh.jpg" width="670"/>|
+<Img src = "https://github.com/serena0720/ios-juice-maker/assets/79740398/5f74f906-dad7-4517-9fc1-0f33c24b9a19" width="670"/>
+
+
 
 <br>
 
