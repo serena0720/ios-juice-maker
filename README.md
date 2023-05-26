@@ -210,7 +210,8 @@ func useValidStock(juiceRecipe: Recipe) throws {
     juiceRecipe.forEach { spendStock(of: $0.fruit, by: $0.amount)}
 }
 ```
-        
+<br>
+    
 ### 🔥 instantiateViewController 재사용
 
 #### 문제상황
@@ -239,7 +240,8 @@ func useValidStock(juiceRecipe: Recipe) throws {
     self.navigationController?.present(stockViewController, animated: true)
 }
 ```
-
+<br>
+    
 ### 🔥 fruitStock 변경 시 MainViewController에서 신호 전달 받는 법
 
 #### 문제상황
@@ -249,6 +251,8 @@ func useValidStock(juiceRecipe: Recipe) throws {
 #### 해결방법
 - `JuiceMaker`에 `FruitStore`의 재고를 가져오는 함수가 있고 `MainViewController`에서 언제 레이블을 업데이트 해야하는지도 명확히 알고 있기 때문에 `Delegate`, `Notification` 을 사용하는 것보다 그냥 `JuiceMaker`의 `getStock`을 호출하여 `view`를 업데이트 하였습니다.
 
+<br>
+    
 ### 🔥 매직넘버 리터럴
 
 #### 문제상황
@@ -257,6 +261,8 @@ func useValidStock(juiceRecipe: Recipe) throws {
 #### 해결방법
 - Namespace를 사용하여 문자열 추적 관리가 용이해졌습니다.
 
+<br>
+    
 ### 🔥 객체 간 결합도 낮추기
 
 #### 문제상황
@@ -267,6 +273,8 @@ func useValidStock(juiceRecipe: Recipe) throws {
 - `StockVC`가 정말로 `JuiceMaker` 객체가 필요한지 고민을 해보았습니다.
 - 초기 `label.text`는 MainVC에서 `FruitStock`만 전달받아 초기화하면 되고, 마지막 최종 업데이트는 `MainVC`가 해도 되었기때문에 `JuiceMaker`객체가 필요없다고 판단하여 삭제했습니다. 
 - 최종 업데이트를 `MainVC`가 하기 위해 `Delegate` 패턴을 이용해 파라미터로 변경된 재고를 보내주었고 이로써 결합도를 낮출 수 있게 되었습니다.
+
+<br>
 
 ### 🔥 StockVC custom init 만들기
 
