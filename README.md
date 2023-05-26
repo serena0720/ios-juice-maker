@@ -1,6 +1,5 @@
 # 🍭🧋🍹JuiceMaker🧃🥛🍬
 
-
 <Img src = "https://hackmd.io/_uploads/H12Bxv4Sn.png" width="700"/>
 
 
@@ -23,6 +22,8 @@
 
     사용자가 쥬스를 선택하면 과일 재고를 확인하고 
     쥬스 레시피에 따라 과일 재고를 소진하여 쥬스를 만들 수 있습니다.
+    만약 과일의 재고가 부족한 경우, 혹은 과일 재고를 변경하고 싶은 경우
+    과일 재고 변경 화면에서 변경이 가능합니다.
 
 <br>
 
@@ -47,13 +48,19 @@
 | **2023.05.16** | ▫️ `Main`, `Stock ViewController` 생성, `error` 메세지 `alert` 구현 <br> ▫️ 네비게이션 `push`로 변경 <br> ▫️ 주문 버튼, 알럿 버튼 추가, 재고레이블 연결 <br> ▫️ 알럿 아니오 클릭 시 화면이동 <br> ▫️ `NotificationCenter`로 `Stock Label` 업데이트 구현 <br> ▫️ `error description` 구현 <br> ▫️ `onTouchOrderButton` 함수분리 <br> ▫️ `notification` 알람 시 `configurelabel` 재활용 | 
 | **2023.05.17** | ▫️ `typecasting`제거, 스토리보드 ID변경 <br> ▫️ `StoryBoardable` 추가, `NavigationController` 한개 삭제 <br> ▫️ `NotificationCenter`에서 `Delegate`패턴으로 신호 전달 방법 변경 <br> ▫️ `onTouchorderButton`내부`switch`문 제거 <br> ▫️ 중복된 에러 처리 리팩토링 | 
 | **2023.05.18** | ▫️ `delegate pattern`을 메소드로 수정 <br> ▫️ 타겟워드 삭제 메소드 변경 <br> ▫️ `Namespace` 생성, 터치메소드 이름 변경| 
+| **2023.05.19** | ▫️ `Error` 종류 추가 <br> ▫️ `Error` 별 다른 얼럿 메세지 | 
+| **2023.05.23** | ▫️ 오토 레이아웃 <br> ▫️ `StockViewController`에 `juiceMaker` 주입 |
+| **2023.05.24** | ▫️ `stepper` 구현 <br> ▫️ `StockViewController`에 `custom init`추가 <br> ▫️ `Storyboardable` 삭제| 
+| **2023.05.25** | ▫️ `delegate pattern`으로 업데이트된 재고 전달 | 
+| **2023.05.26** | ▫️ `@available`을 통해 fatalError 런타임에러 방지| 
 
 <br>
 
 <a id="4."></a>
 ## 4. 📊 다이어그램
 
-<Img src = "https://github.com/serena0720/ios-juice-maker/assets/79740398/5f74f906-dad7-4517-9fc1-0f33c24b9a19" width="670"/>
+<Img src = "https://hackmd.io/_uploads/SyhDxATBn.png" width=100%/>
+<Img src = "https://hackmd.io/_uploads/BkI0gApSn.png" width=100%/>
 
 
 
@@ -61,8 +68,14 @@
 
 <a id="5."></a>
 ## 5. 📲 실행 화면
+|쥬스 주문 화면|
+|:---:|
+|<Img src = "https://github.com/serena0720/ios-juice-maker/assets/79740398/80611c7c-7a58-4ebb-9062-8a81bcf1b1cd" width=100%>|
 
-![](https://postfiles.pstatic.net/MjAyMzA1MTlfNzYg/MDAxNjg0NDczMzI2Njcz.LxxTOCPDh9sxd4QAy54pPSvyeT7YWFKDG_Rl2zxuTaQg.Nkf42WjKutzqYlGW55LM4zmOdnKsugttxvK2UUU7EPAg.GIF.sha0720/Simulator_Screen_Recording_-_iPhone_14_Pro_-_2023-05-19_at_14.13.13.gif?type=w773)
+|재고 수정 화면|
+|:---:|
+|<Img src = "https://github.com/serena0720/ios-juice-maker/assets/79740398/49507512-63e9-45e8-8a0e-e455e572da18" width=100%>|
+
 
 
 <br>
@@ -200,11 +213,11 @@ func useValidStock(juiceRecipe: Recipe) throws {
 ### 🔥 instantiateViewController 재사용
 
 #### 문제상황
-- 스토리보드에서 viewController를 가져오기 위해 instantiateViewController(withIdentifier:) 메소드를 호출합니다.
+- 스토리보드에서 `viewController`를 가져오기 위해 `instantiateViewController(withIdentifier:)` 메소드를 호출합니다.
 - 하지만 다운캐스팅과 옵셔널 언래핑을 해줘야하고 여러 곳에서 호출되기 때문에 재사용성에 대해 고민하였습니다.
 
 #### 해결방법
-- 프로토콜과 extension을 사용한 기본구현을 통해 "Main" 스토리보드에서 id를 통해 viewController를 가져오는 static function을 구현했습니다.
+- 프로토콜과 `extension`을 사용한 기본구현을 통해 "Main" 스토리보드에서 `id`를 통해 `viewController`를 가져오는 `static function`을 구현했습니다.
 - 참고자료: 하단 참조
 
 ⚠️ 수정 전
@@ -229,11 +242,11 @@ func useValidStock(juiceRecipe: Recipe) throws {
 ### 🔥 fruitStock 변경 시 MainViewController에서 신호 전달 받는 법
 
 #### 문제상황
-- 처음엔 fruitStock이 didSet 될 때 마다 Notification.post하고 MainViewController에서 수신하는 방식을 사용해 view를 업데이트 하였습니다.
-- 좋은 방식이긴 하였으나 Delegate 패턴을 적용해보고 싶어 리팩토링을 하였습니다. 당시 Delegate를 사용해야하는 명확한 이유는 없었다는게 오점이였습니다.
+- 처음엔 `fruitStock`이 `didSet` 될 때 마다 `Notification.post`하고 `MainViewController`에서 수신하는 방식을 사용해 `view`를 업데이트 하였습니다.
+- 좋은 방식이긴 하였으나 `Delegate` 패턴을 적용해보고 싶어 리팩토링을 하였습니다. 당시 `Delegate`를 사용해야하는 명확한 이유는 없었다는게 오점이였습니다.
 
 #### 해결방법
-- JuiceMaker에 FruitStore의 재고를 가져오는 함수가 있고 MainViewController에서 언제 레이블을 업데이트 해야하는지도 명확히 알고 있기 때문에 Delegate, Notification 을 사용하는 것보다 그냥 JuiceMaker의 getStock을 호출하여 view를 업데이트 하였습니다.
+- `JuiceMaker`에 `FruitStore`의 재고를 가져오는 함수가 있고 `MainViewController`에서 언제 레이블을 업데이트 해야하는지도 명확히 알고 있기 때문에 `Delegate`, `Notification` 을 사용하는 것보다 그냥 `JuiceMaker`의 `getStock`을 호출하여 `view`를 업데이트 하였습니다.
 
 ### 🔥 매직넘버 리터럴
 
@@ -243,17 +256,59 @@ func useValidStock(juiceRecipe: Recipe) throws {
 #### 해결방법
 - Namespace를 사용하여 문자열 추적 관리가 용이해졌습니다.
 
-<br>
+### 🔥 객체 간 결합도 낮추기
 
+#### 문제상황
+- `MainVC`와 `StockVC`가 `JuiceMaker`를 주입하면서 결합도가 높아졌습니다.
+- `JuiceMaker`를 수정하면 두 `VC` 모두 수정해야하고 예기치 못한 부작용이 발생할 수 있습니다.
+
+#### 해결방법
+- `StockVC`가 정말로 `JuiceMaker` 객체가 필요한지 고민을 해보았습니다.
+- 초기 `label.text`는 MainVC에서 `FruitStock`만 전달받아 초기화하면 되고, 마지막 최종 업데이트는 `MainVC`가 해도 되었기때문에 `JuiceMaker`객체가 필요없다고 판단하여 삭제했습니다. 
+- 최종 업데이트를 `MainVC`가 하기 위해 `Delegate` 패턴을 이용해 파라미터로 변경된 재고를 보내주었고 이로써 결합도를 낮출 수 있게 되었습니다.
+
+### 🔥 StockVC custom init 만들기
+
+#### 문제상황
+- `MainVC`에서 `StockVC`로 인스턴스를 전달하고자 할 때, 주입받는 `StockVC`에서 새롭게 `init`을 통해 초기화를 해야합니다. 이때 `StockVC`가 취하는 `ViewController`에 기본적으로 제공되는 `required init`을 덮어 쓰기 때문에 `required init`을 새롭게 다시 정의해야합니다. 하지만 이때 새로 정의한 `init`이 아닌 `required init`을 타게되면 `fatalError`가 나게 됩니다.
+- 또한 새로운 `init`을 정의했기 때문에 `.instantiateViewController`를 사용할 수 없게 되었습니다.
+
+#### 해결방법
+- `custom init`을 만들게 되면 `.instantiateViewController`의 `creator` 파라미터를 받는 메소드를 사용해야합니다.
+```swift
+.instantiateViewController(
+    identifier: String(describing: StockViewController.self),
+    creator: { coder in
+        StockViewController(currentFruitStock: self.juiceMaker.getAllStock(), coder: coder)
+    }
+)
+```
+
+- 하지만 init 메소드가 2개이기 때문에 개발자가 실수로 required init으로 접근할 수 있습니다.
+- 이때 `@available(*, unavailable)`을 사용하면 해당 기능을 사용할 수 없게 강제할 수 있습니다. 따라서 개발자가 실수로 `required init?`으로 생성하면 내부의 `fatalError`를 실행하지 못하도록 컴파일 에러를 발생시킬 수 있습니다.
+
+```swift
+@available(*, unavailable)
+required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+}
+```
+
+<br>
 
 
 <a id="7."></a> 
 ## 7. 🔗 참고 링크
 - [🍎Apple Docs: UIViewController](https://developer.apple.com/documentation/uikit/uiviewcontroller)
 - [🍎Apple Docs: Initialization](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/initialization/#Required-Initializers)
+- [🍎Apple Docs: instantiateViewController(identifier:creator:)](https://developer.apple.com/documentation/uikit/uistoryboard/3213989-instantiateviewcontroller)
 - [📘Blog: Delegate, Notification, KVO 비교 및 장단점 정리](https://you9010.tistory.com/275#:~:text=key%20값으로%20Notification의,정보를%20받을%20수%20없음.)
 - [📘Blog: Instantiating View Controllers From a Storyboard](https://cocoacasts.com/mastering-navigation-with-coordinators-instantiating-view-controllers-from-a-storyboard)
 - [📘Blog: Instantiate and Present a viewController in Swift](https://stackoverflow.com/questions/24035984/instantiate-and-present-a-viewcontroller-in-swift)
+- [📘Blog: @available(*, unavailable) 사용하여 비가용성 정의](https://dev-dmsgk.tistory.com/47)
+- [📘Blog: UML Class Diagram with Swift](https://zdodev.github.io/uml/swift/UML-Class-Diagram/)
+- [📘Blog: Storyboard instantiate](https://cocoacasts.com/mastering-navigation-with-coordinators-instantiating-view-controllers-from-a-storyboard)
+- [📘Blog: Attributes](https://xho95.github.io/swift/language/grammar/attribute/2020/08/14/Attributes.html)
 
 <br>
 
@@ -273,9 +328,11 @@ func useValidStock(juiceRecipe: Recipe) throws {
     - 시간 약속을 잘 지킵니다.
     - 코드에 대한 이해가 높아 모르는 부분에 설명을 잘 해 줬습니다.
     - 코드 공부에 대한 열정이 높습니다!
-    - 시간 조율이 원활했습니다
+    - 시간 조율이 원활했습니다.
     
 - Dear. Serena 🐷
     - 시간 약속을 잘 지킵니다.
     - 배움의 의욕이 높고 깨달았을 때 응용력이 좋습니다.
     - 배려와 양보를 잘 해주었습니다.
+    - 리액션이 좋고 사람을 편안하게 해줍니다.
+    - 디자인의 감각이 뛰어납니다.
