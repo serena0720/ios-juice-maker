@@ -270,7 +270,7 @@ func useValidStock(juiceRecipe: Recipe) throws {
 ### 🔥 StockVC custom init 만들기
 
 #### 문제상황
-- `MainVC`에서 `StockVC`로 인스턴스를 전달하고자 할 때, 주입받는 `StockVC`에서 새롭게 `init`을 통해 초기화를 해야합니다. 이때 `StockVC`가 취하는 `ViewController`에 기본적으로 제공되는 `required init`을 덮어 쓰기 때문에 `required init`을 새롭게 다시 정의해야합니다. 하지만 이때 새로 정의한 `init`이 아닌 `required init`을 타게되면 `fatalError`가 나게 됩니다.
+- `MainVC`에서 `StockVC`로 인스턴스를 전달하고자 할 때, 주입받는 `StockVC`에서 새롭게 `init`을 통해 초기화를 해야합니다. 이때 `StockVC`가 상속받는 `UIViewController`에 기본적으로 제공되는 `required init`을 덮어 쓰기 때문에 `required init`을 새롭게 다시 정의해야합니다. 하지만 이때 새로 정의한 `init`이 아닌 `required init`을 타게되면 `fatalError`가 나게 됩니다.
 - 또한 새로운 `init`을 정의했기 때문에 `.instantiateViewController`를 사용할 수 없게 되었습니다.
 
 #### 해결방법
