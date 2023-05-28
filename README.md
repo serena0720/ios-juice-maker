@@ -2,6 +2,7 @@
 
 <Img src = "https://hackmd.io/_uploads/H12Bxv4Sn.png" width="700"/>
 
+> 프로젝트 기간 : 2023.05.08 ~ 2023.05.26
 
 ## 📖 목차
 
